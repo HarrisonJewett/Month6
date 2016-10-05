@@ -16,6 +16,7 @@ public:
 	GamePlay();
 
 	~GamePlay();
+	//I have made changes
 
 	
 	void Play()
