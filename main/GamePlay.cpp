@@ -4,7 +4,7 @@
 
 GamePlay::GamePlay()
 {
-	User = new Player();
+	User = new Player(Console::WindowWidth() / 2, Console::WindowHeight() / 4 * 3, 'O', Yellow);
 	Enemies = new Base[4];
 
 	play = true;
@@ -76,46 +76,46 @@ void GamePlay::Render()
 	Console::Clear();
 
 	if (changeSymbol % 4 < 3)
-		Player->SetSymbol('O');
+		User->SetSymbol('O');
 
 	//Classic Pacman movement
 	if (up)
 	{
 		if (changeSymbol % 4 > 2)
-			Player->SetSymbol('V');
-		Player->SetY(Player->GetY() - 1);
+			User->SetSymbol('V');
+		User->SetY(User->GetY() - 1);
 	}
 	if (down)
 	{
 		if (changeSymbol % 4 > 2)
-			Player->SetSymbol('^');
-		Player->SetY(Player->GetY() + 1);
+			User->SetSymbol('^');
+		User->SetY(User->GetY() + 1);
 	}
 	if (left)
 	{
 		if (changeSymbol % 4 > 2)
-			Player->SetSymbol('>');
-		Player->SetX(Player->GetX() - 1);
+			User->SetSymbol('>');
+		User->SetX(User->GetX() - 1);
 	}
 	if (right)
 	{
 		if (changeSymbol % 4 > 2)
-			Player->SetSymbol('<');
-		Player->SetX(Player->GetX() + 1);
+			User->SetSymbol('<');
+		User->SetX(User->GetX() + 1);
 	}
 
 	//Display objects here
-	if (Player->GetX() < 0)
-		Player->SetX(0);
-	else if (Player->GetX() > Console::WindowWidth() - 1)
-		Player->SetX(Console::WindowWidth() - 1);
-	if (Player->GetY() < 0)
-		Player->SetY(0);
-	else if (Player->GetY() > Console::WindowHeight() - 1)
-		Player->SetY(Console::WindowHeight() - 1);
-	Console::SetCursorPosition(Player->GetX(), Player->GetY());
-	Console::ForegroundColor(Player->GetFrontColor());
-	cout << Player->GetSymbol();
+	if (User->GetX() < 0)
+		User->SetX(0);
+	else if (User->GetX() > Console::WindowWidth() - 1)
+		User->SetX(Console::WindowWidth() - 1);
+	if (User->GetY() < 0)
+		User->SetY(0);
+	else if (User->GetY() > Console::WindowHeight() - 1)
+		User->SetY(Console::WindowHeight() - 1);
+	Console::SetCursorPosition(User->GetX(), User->GetY());
+	Console::ForegroundColor(User->GetFrontColor());
+	cout << User->GetSymbol();
 	Console::ForegroundColor(Gray);
 
 	Console::Lock(false);
