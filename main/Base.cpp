@@ -6,21 +6,30 @@ Base::Base()
 {
 	xCoor = 0;
 	yCoor = 0;
-	isAlive = false;
 	symbol = '.';
-	symbolColorBack = Black;
 	symbolColorFront = White;
 }
-Base::Base(int x, int y, bool _Alive, char _symbol, ConsoleColor back, ConsoleColor front)
+Base::Base(int x, int y, char _symbol, ConsoleColor front)
 {
 	SetX(x);
 	SetY(y);
-	SetAlive(_Alive);
 	SetSymbol(_symbol);
-	SetBackColor(back);
 	SetFrontColor(front);
 }
 
 Base::~Base()
 {
 }
+
+//Getters
+int Base::GetX() { return xCoor; }
+int Base::GetY() { return yCoor; }
+//bool Base::GetAlive() { return isAlive; }
+char Base::GetSymbol() { return symbol; }
+ConsoleColor Base::GetFrontColor() { return symbolColorFront; }
+
+//Setters
+void Base::SetX(int x) { xCoor = x; }
+void Base::SetY(int y) { yCoor = y; }
+//void Base::SetAlive(bool _alive) { isAlive = _alive; }
+void Base::SetSymbol(char _symbol) { symbol = _symbol; }
