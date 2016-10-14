@@ -1,4 +1,6 @@
 #pragma once
+#include "stdafx.h"
+
 
 class Base
 {
@@ -6,7 +8,7 @@ class Base
 	int yCoor;
 	char symbol;
 	ConsoleColor symbolColorBack;
-	ConsoleColor symbolColorFront;
+	System::ConsoleColor symbolColorFront;
 
 
 public:

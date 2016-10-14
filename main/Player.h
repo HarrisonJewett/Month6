@@ -8,11 +8,14 @@ class Player :
 	bool left;
 	bool right;
 	int lives;
+	//I have changed thigs
 
 public:
 	Player();
-	Player(int x, int y, char _symbol, ConsoleColor front) : Base(x, y, _symbol, front) { ; }
+	Player(int x, int y, char _symbol, ConsoleColor front);
 	~Player();
+
+	void resetPos();
 
 	//Get
 	int GetLives();

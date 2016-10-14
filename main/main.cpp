@@ -6,10 +6,14 @@
 
 
 int main()
-{
-	GamePlay gp;
-	gp.Play();
+{	
+	bool play = true;
 
-	system("pause");
+	while (play)
+	{
+		GamePlay gp;
+		gp.Play();
+		play = gp.gameOver();
+	}
     return 0;
 }
