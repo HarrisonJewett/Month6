@@ -8,6 +8,7 @@ class Player :
 	bool left;
 	bool right;
 	int lives;
+	//I have changed thigs
 
 public:
 	Player();
