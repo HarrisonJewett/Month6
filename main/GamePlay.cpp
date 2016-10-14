@@ -70,7 +70,6 @@ void GamePlay::Update()
 	{
 		if (!walls[User->GetX()][User->GetY() - 2]->isAlive())
 		{
-			//Need to put wall collision here
 			up = true;
 			down = false;
 			right = false;
@@ -142,31 +141,47 @@ void GamePlay::Render()
 	cout << ' ';
 	if (up)
 	{
-		if (walls[User->GetX()][User->GetY()])
+		if (walls[User->GetX()][User->GetY() - 2]->isAlive())
+			up = false;
+		else
 		{
-
+			if (changeSymbol % 6 > 2)
+				User->SetSymbol('V');
+			User->SetY(User->GetY() - 1);
 		}
-		if (changeSymbol % 6 > 2)
-			User->SetSymbol('V');
-		User->SetY(User->GetY() - 1);
 	}
 	if (down)
 	{
-		if (changeSymbol % 6 > 2)
-			User->SetSymbol('^');
-		User->SetY(User->GetY() + 1);
+		if (walls[User->GetX()][User->GetY()]->isAlive())
+			down = false;
+		else
+		{
+			if (changeSymbol % 6 > 2)
+				User->SetSymbol('^');
+			User->SetY(User->GetY() + 1);
+		}
 	}
 	if (left)
 	{
-		if (changeSymbol % 6 > 2)
-			User->SetSymbol('>');
-		User->SetX(User->GetX() - 1);
+		if (walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
+			left = false;
+		else
+		{
+			if (changeSymbol % 6 > 2)
+				User->SetSymbol('>');
+			User->SetX(User->GetX() - 1);
+		}
 	}
 	if (right)
 	{
-		if (changeSymbol % 6 > 2)
-			User->SetSymbol('<');
-		User->SetX(User->GetX() + 1);
+		if (walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
+			down = false;
+		else
+		{
+			if (changeSymbol % 6 > 2)
+				User->SetSymbol('<');
+			User->SetX(User->GetX() + 1);
+		}
 	}
 	changeSymbol++;
 
@@ -259,10 +274,11 @@ void GamePlay::itsSimpleWeKillThePacman()
 
 void GamePlay::resetGhost()
 {
+	//change this
 	for (int i = 0; i < 4; i++)
 	{
-		Ghosts[i].SetX(Console::WindowWidth() / 2 - (i - 2));
-		Ghosts[i].SetY(Console::WindowHeight() / 2);
+		Ghosts[i].SetX(Console::WindowWidth() / 2 - (i - 1));
+		Ghosts[i].SetY(Console::WindowHeight() / 2 + (i % 2));
 	}
 }
 
