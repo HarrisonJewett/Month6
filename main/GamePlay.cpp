@@ -70,6 +70,7 @@ void GamePlay::Update()
 	{
 		if (!walls[User->GetX()][User->GetY() - 2]->isAlive())
 		{
+			//Need to put wall collision here
 			up = true;
 			down = false;
 			right = false;
