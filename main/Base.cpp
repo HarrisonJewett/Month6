@@ -32,4 +32,5 @@ ConsoleColor Base::GetFrontColor() { return symbolColorFront; }
 void Base::SetX(int x) { xCoor = x; }
 void Base::SetY(int y) { yCoor = y; }
 //void Base::SetAlive(bool _alive) { isAlive = _alive; }
+//Changed things here
 void Base::SetSymbol(char _symbol) { symbol = _symbol; }

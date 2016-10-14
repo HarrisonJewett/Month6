@@ -17,4 +17,5 @@ public:
 
 	//Set
 	void SetAlive(bool _alive);
+	//Changed things here
 };

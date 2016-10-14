@@ -22,4 +22,5 @@ bool Walls::isDot() { return dot; }
 //Set
 void Walls::isAlive(bool _alive) { cellOn = _alive; }
 void Walls::isPowerUp(bool _powerUp) { powerUp = _powerUp; }
+//Changed things here
 void Walls::isDot(bool _dot) { dot = _dot; }
