@@ -1,8 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "Player.h"
-#include "Enemy.h";
-#include "Walls.h";
+#include "Enemy.h"
+#include "Walls.h"
+#include "Menu.h"
 
 class GamePlay
 {
@@ -10,9 +11,11 @@ public:
 	GamePlay();
 	~GamePlay();
 
+	Menu* menu;
 	Player* User;
 	Enemy* Ghosts;
 	Walls*** walls;
+
 
 	void Play();
 	void Update();
@@ -32,6 +35,7 @@ public:
 	int changeSymbol;
 	bool pacmanAlive;
 	int score;
+	int ghostScore;
 	int ghostMove;
 	//Changed things here
 };

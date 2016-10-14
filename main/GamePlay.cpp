@@ -4,6 +4,12 @@
 
 GamePlay::GamePlay()
 {
+	//Displaying the menu
+	menu = new Menu();
+	menu->mainMenu();
+
+	Console::Clear();
+
 	//Adding two lines for displaying score and "Press ESC to exit"
 	Console::SetWindowSize(30, 38);
 	Console::SetBufferSize(30, 38);
@@ -32,6 +38,7 @@ GamePlay::GamePlay()
 	changeSymbol = 0;
 	pacmanAlive = true;
 	score = 0;
+	ghostScore = 0;
 	ghostMove = 0;
 
 	int i = 0;
@@ -40,6 +47,12 @@ GamePlay::GamePlay()
 		Ghosts[i].SetX(Console::WindowWidth() / 2 - (i - 1));
 		Ghosts[i].SetY(Console::WindowHeight() / 2 + (i % 2));
 	}
+
+	//Turn ghost 0 on at 10 points
+	//Turn ghost 1 on at 50 points
+	//Turn ghost 2 on at 100 points
+	//Turn ghost 3 on at 150 points
+
 	Ghosts[0].SetFrontColor(Red);
 	//Ghosts[0].SetAlive(true);
 	Ghosts[1].SetFrontColor(Cyan);
@@ -65,6 +78,20 @@ void GamePlay::Play()
 }
 void GamePlay::Update()
 {
+
+	if (ghostScore == 10)
+	{
+		Ghosts[0].SetAlive(true);
+		Ghosts[0].setUp(true);
+	}
+	else if (ghostScore == 50)
+		Ghosts[1].SetAlive(true);
+	else if (ghostScore == 100)
+		Ghosts[2].SetAlive(true);
+	else if (ghostScore == 150)
+		Ghosts[3].SetAlive(true);
+
+
 	//Getting key input for pacman movement
 	if (GetAsyncKeyState('W'))
 	{
@@ -88,22 +115,34 @@ void GamePlay::Update()
 	}
 	else if (GetAsyncKeyState('A'))
 	{
-		if (!walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
+		if (User->GetX() == 0 && User->GetY() == 19)
 		{
-			left = true;
-			up = false;
-			down = false;
-			right = false;
+		}
+		else
+		{
+			if (!walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
+			{
+				left = true;
+				up = false;
+				down = false;
+				right = false;
+			}
 		}
 	}
 	else if (GetAsyncKeyState('D'))
 	{
-		if (!walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
+		if (User->GetX() == Console::WindowWidth() - 1 && User->GetY() == 19)
 		{
-			right = true;
-			up = false;
-			down = false;
-			left = false;
+		}
+		else
+		{
+			if (!walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
+			{
+				right = true;
+				up = false;
+				down = false;
+				left = false;
+			}
 		}
 	}
 }
@@ -113,7 +152,7 @@ void GamePlay::Render()
 	//Console::Clear();
 	Console::SetCursorPosition(0, 0);
 	cout << "Lives x" << User->GetLives() << "   Score: " << score;
-		
+
 	Console::SetCursorPosition(0, Console::WindowHeight() - 1);
 	cout << "Press ESC to exit";
 
@@ -139,12 +178,19 @@ void GamePlay::Render()
 		User->SetSymbol('O');
 	Console::SetCursorPosition(User->GetX(), User->GetY());
 	cout << ' ';
+
 	if (up)
 	{
 		if (walls[User->GetX()][User->GetY() - 2]->isAlive())
 			up = false;
 		else
 		{
+			if (walls[User->GetX()][User->GetY() - 2]->isDot())
+			{
+				score++;
+				ghostScore++;
+				walls[User->GetX()][User->GetY() - 2]->isDot(false);
+			}
 			if (changeSymbol % 6 > 2)
 				User->SetSymbol('V');
 			User->SetY(User->GetY() - 1);
@@ -156,6 +202,12 @@ void GamePlay::Render()
 			down = false;
 		else
 		{
+			if (walls[User->GetX()][User->GetY()]->isDot())
+			{
+				score++;
+				ghostScore++;
+				walls[User->GetX()][User->GetY()]->isDot(false);
+			}
 			if (changeSymbol % 6 > 2)
 				User->SetSymbol('^');
 			User->SetY(User->GetY() + 1);
@@ -163,26 +215,52 @@ void GamePlay::Render()
 	}
 	if (left)
 	{
-		if (walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
-			left = false;
+		if (User->GetX() == 0 && User->GetY() == 19)
+			User->SetX(Console::WindowWidth() - 1);
 		else
 		{
-			if (changeSymbol % 6 > 2)
-				User->SetSymbol('>');
-			User->SetX(User->GetX() - 1);
+			if (walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
+				left = false;
+
+			else
+			{
+				if (walls[User->GetX() - 1][User->GetY() - 1]->isDot())
+				{
+					score++;
+					ghostScore++;
+					walls[User->GetX() - 1][User->GetY() - 1]->isDot(false);
+				}
+				if (changeSymbol % 6 > 2)
+					User->SetSymbol('>');
+				User->SetX(User->GetX() - 1);
+			}
 		}
 	}
 	if (right)
 	{
-		if (walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
-			down = false;
+		if (User->GetX() == Console::WindowWidth() - 1 && User->GetY() == 19)
+		{
+			User->SetX(0);
+		}
 		else
 		{
-			if (changeSymbol % 6 > 2)
-				User->SetSymbol('<');
-			User->SetX(User->GetX() + 1);
+			if (walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
+				down = false;
+			else
+			{
+				if (walls[User->GetX() + 1][User->GetY() - 1]->isDot())
+				{
+					score++;
+					ghostScore++;
+					walls[User->GetX() + 1][User->GetY() - 1]->isDot(false);
+				}
+				if (changeSymbol % 6 > 2)
+					User->SetSymbol('<');
+				User->SetX(User->GetX() + 1);
+			}
 		}
 	}
+
 	changeSymbol++;
 
 	//Checking for console window size
@@ -213,7 +291,7 @@ void GamePlay::Render()
 	Console::ForegroundColor(User->GetFrontColor());
 	cout << User->GetSymbol();
 	Console::ForegroundColor(Gray);
-	
+
 
 	if (ghostMove % 2 == 1)
 	{
@@ -269,6 +347,7 @@ void GamePlay::itsSimpleWeKillThePacman()
 	down = false;
 	right = false;
 	left = false;
+	ghostScore = 0;
 	resetGhost();
 }
 
@@ -279,6 +358,7 @@ void GamePlay::resetGhost()
 	{
 		Ghosts[i].SetX(Console::WindowWidth() / 2 - (i - 1));
 		Ghosts[i].SetY(Console::WindowHeight() / 2 + (i % 2));
+		Ghosts[i].SetAlive(false);
 	}
 }
 
@@ -311,9 +391,20 @@ bool GamePlay::gameOver()
 void GamePlay::setUpWalls()
 {
 	ifstream pcin;
-
-	pcin.open("PacmanLevel.pcmn");
-
+	switch (menu->getDif())
+	{
+	case 1:
+		pcin.open("Easy.pcmn");
+		break;
+	case 2:
+		pcin.open("NormalLevel.pcmn");
+		break;
+	case 3:
+		pcin.open("Impossible.pcmn");
+		break;
+	default:
+		break;
+	}
 	if (pcin.is_open())
 	{
 		int numberOfLinesRead = 0;
@@ -323,7 +414,7 @@ void GamePlay::setUpWalls()
 			pcin.getline(readLine, 32, '\n');
 			/*cout << readLine;
 			system("pause");*/
-			
+
 			for (int i = 0; i < 30; i++)
 			{
 				if (readLine[i] == '0')
@@ -344,7 +435,6 @@ void GamePlay::setUpWalls()
 		//file didn't open
 	}
 
-	
 	//Drawing walls
 	for (int x = 0; x < 30; x++)
 	{
@@ -376,16 +466,41 @@ void GamePlay::ghostAI()
 			int pacX = User->GetX();
 			int pacY = User->GetY();
 
+			if (Ghosts[i].getUp())
+			{
+				if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isDot())
+				{
+					Console::SetCursorPosition(Ghosts[i].GetX(), Ghosts[i].GetY() - 1);
+					cout << '.';
+				}
+				if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 2]->isAlive())
+				{
+					Ghosts[i].setUp(false);
+				}
+				else
+					Ghosts[i].SetY(Ghosts[i].GetY() - 1);
+			}
 
+			/*
+			Console::SetCursorPosition(Ghosts[i].GetX(), Ghosts[i].GetY());
+			if (walls[Ghosts[i].GetX()][Ghosts[i].GetY()]->isDot())
+				cout << '.';
+			else if (walls[Ghosts[i].GetX()][Ghosts[i].GetY()]->isPowerUp())
+				cout << '0';
+			else
+				cout << ' ';
 			if (abs(ghostX - pacX) > abs(ghostY - pacY))
 			{
+
 				if (pacX > ghostX)
+				{
 					Ghosts[i].SetX(ghostX += 1);
+				}
 				else
 					Ghosts[i].SetX(ghostX -= 1);
 			}
 			else if (abs(ghostX - pacX) < abs(ghostY - pacY))
-			{				
+			{
 				if (pacY > ghostY)
 					Ghosts[i].SetY(ghostY += 1);
 				else
@@ -394,7 +509,7 @@ void GamePlay::ghostAI()
 			else if (ghostX == pacX && ghostY == pacY)
 			{
 				itsSimpleWeKillThePacman();
-			}
+			}*/
 		}
 	}
 }

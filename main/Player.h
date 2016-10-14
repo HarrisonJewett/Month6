@@ -3,10 +3,6 @@
 class Player :
 	public Base
 {
-	bool up;
-	bool down;
-	bool left;
-	bool right;
 	int lives;
 	//I have changed thigs
 
