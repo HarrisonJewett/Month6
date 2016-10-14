@@ -33,4 +33,5 @@ public:
 	bool pacmanAlive;
 	int score;
 	int ghostMove;
+	//Changed things here
 };

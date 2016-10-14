@@ -19,3 +19,4 @@ bool Enemy::GetAlive() { return isAlive; }
 
 //set
 void Enemy::SetAlive(bool _alive) { isAlive = _alive; }
+//Changed things here

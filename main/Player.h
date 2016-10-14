@@ -22,4 +22,6 @@ public:
 
 	//Set
 	void loseLives();
+
+	//Changed things here
 };

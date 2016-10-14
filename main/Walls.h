@@ -21,4 +21,5 @@ public:
 	void isAlive(bool _alive);
 	void isPowerUp(bool _powerUp);
 	void isDot(bool _dot);
+	//Changed things here
 };

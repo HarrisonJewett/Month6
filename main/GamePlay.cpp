@@ -88,7 +88,7 @@ void GamePlay::Update()
 	}
 	else if (GetAsyncKeyState('A'))
 	{
-		if (!walls[User->GetX() - 1][User->GetY() + 1]->isAlive())
+		if (!walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
 		{
 			left = true;
 			up = false;
@@ -98,7 +98,7 @@ void GamePlay::Update()
 	}
 	else if (GetAsyncKeyState('D'))
 	{
-		if (!walls[User->GetX() + 1][User->GetY() + 1]->isAlive())
+		if (!walls[User->GetX() + 1][User->GetY() - 1]->isAlive())
 		{
 			right = true;
 			up = false;

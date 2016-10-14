@@ -34,4 +34,5 @@ void Player::resetPos()
 int Player::GetLives() { return lives; }
 
 //Set
+//Changed things here
 void Player::loseLives() { lives--; }
