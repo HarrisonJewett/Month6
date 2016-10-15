@@ -6,7 +6,9 @@
 
 
 int main()
-{	
+{
+	Console::CursorVisible(false);
+
 	bool play = true;
 
 	while (play)
@@ -16,5 +18,4 @@ int main()
 		play = gp.gameOver();
 	}
     return 0;
-	//Changed things here
 }

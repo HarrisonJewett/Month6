@@ -5,7 +5,7 @@
 Menu::Menu()
 {
 	choice = 0;
-	difficultySetting = 2;
+	difficultySetting = 1;
 }
 
 
@@ -57,12 +57,13 @@ void Menu::mainMenu()
 			cout << "\n    2. Instructions";
 			cout << "\n    3. Difficulty selection";
 			cout << "\n    4. Highscores";
-			cout << "\n    5. Exit";
 			choice++;
 		}
 
 		if (GetAsyncKeyState('1'))
+		{
 			break;
+		}
 		if (GetAsyncKeyState('2'))
 		{
 			controls();
@@ -75,10 +76,6 @@ void Menu::mainMenu()
 		}
 		if (GetAsyncKeyState('4'))
 		{
-		}
-		if (GetAsyncKeyState('5'))
-		{
-			break;
 		}
 
 	}
@@ -94,7 +91,7 @@ void Menu::controls()
 	cout << "\n\nCollect powerups to eat ghosts and earn more points.";
 	cout << "\n\nUse WASD for controls";
 	cout << "\n\nIf you are coming across a tight corner, try holding down the direction you want to turn";
-	cout << "\n\nPress ESC at anytime to quit.";
+	cout << "\n\nPress ESC anytime during gameplay to quit.";
 	cout << "\n\nPress ESC to return to the main menu.";
 
 	while (true)
@@ -107,6 +104,8 @@ void Menu::controls()
 void Menu::difficulty()
 {
 	choice = 0;
+
+	difficultySetting = 0;
 
 	Console::Clear();
 	while (true)
@@ -147,12 +146,21 @@ void Menu::difficulty()
 				difficultySetting = 3;
 				cout << "\n\nDifficulty set to impossible. Press ESC to return to the main menu. And good luck...";
 			}
-		}		
+		}
+
 		Console::ForegroundColor(Gray);
 		Console::Lock(false);
-		Sleep(50);
+		
 
 		if (GetAsyncKeyState(VK_ESCAPE))
-			return;
+		{
+			if (difficultySetting == 0)
+			{
+				cout << "\nTry again, make sure you pick a difficulty before exiting.";
+			}
+			else
+				return;
+		}
+		Sleep(50);
 	}
 }

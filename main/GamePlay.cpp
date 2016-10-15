@@ -8,6 +8,7 @@ GamePlay::GamePlay()
 	menu = new Menu();
 	menu->mainMenu();
 
+
 	Console::Clear();
 
 	//Adding two lines for displaying score and "Press ESC to exit"
@@ -16,6 +17,7 @@ GamePlay::GamePlay()
 
 	User = new Player(Console::WindowWidth() / 2, Console::WindowHeight() / 5 * 3 + 1, 'O', Yellow);
 	Ghosts = new Enemy[4];
+	srand(GetTickCount());
 
 	//Walls xSize
 	walls = new Walls**[30];
@@ -40,6 +42,9 @@ GamePlay::GamePlay()
 	score = 0;
 	ghostScore = 0;
 	ghostMove = 0;
+	pelletCount = 0;
+	maxPelletCount = 0;
+
 
 	int i = 0;
 	for (; i < 4; ++i)
@@ -53,11 +58,7 @@ GamePlay::GamePlay()
 	//Turn ghost 2 on at 100 points
 	//Turn ghost 3 on at 150 points
 
-	Ghosts[0].SetFrontColor(Red);
-	//Ghosts[0].SetAlive(true);
-	Ghosts[1].SetFrontColor(Cyan);
-	Ghosts[2].SetFrontColor(Yellow);
-	Ghosts[3].SetFrontColor(Magenta);
+	
 
 	setUpWalls();
 }
@@ -68,22 +69,36 @@ GamePlay::~GamePlay()
 
 void GamePlay::Play()
 {
-	Console::CursorVisible(false);
-
 	while (play)
 	{
 		Update();
 		Render();
 	}
+
+	if (walls)
+	{
+		for (int x = 0; x < 30; x++)
+		{
+			for (int y = 0; y < 36; y++)
+			{
+				delete walls[x][y];
+			}
+			delete[] walls[x];
+		}
+		delete walls;
+		delete User;
+		delete[] Ghosts;
+	}
 }
 void GamePlay::Update()
 {
+	Ghosts[0].SetFrontColor(Red);
+	Ghosts[1].SetFrontColor(Cyan);
+	Ghosts[2].SetFrontColor(Yellow);
+	Ghosts[3].SetFrontColor(Magenta);
 
 	if (ghostScore == 10)
-	{
 		Ghosts[0].SetAlive(true);
-		Ghosts[0].setUp(true);
-	}
 	else if (ghostScore == 50)
 		Ghosts[1].SetAlive(true);
 	else if (ghostScore == 100)
@@ -188,6 +203,7 @@ void GamePlay::Render()
 			if (walls[User->GetX()][User->GetY() - 2]->isDot())
 			{
 				score++;
+				pelletCount++;
 				ghostScore++;
 				walls[User->GetX()][User->GetY() - 2]->isDot(false);
 			}
@@ -205,6 +221,7 @@ void GamePlay::Render()
 			if (walls[User->GetX()][User->GetY()]->isDot())
 			{
 				score++;
+				pelletCount++;
 				ghostScore++;
 				walls[User->GetX()][User->GetY()]->isDot(false);
 			}
@@ -216,7 +233,16 @@ void GamePlay::Render()
 	if (left)
 	{
 		if (User->GetX() == 0 && User->GetY() == 19)
+		{
+			if (walls[Console::WindowWidth() - 1][18]->isDot())
+			{
+				score++;
+				pelletCount++;
+				ghostScore++;
+				walls[Console::WindowWidth() - 1][18]->isDot(false);
+			}
 			User->SetX(Console::WindowWidth() - 1);
+		}
 		else
 		{
 			if (walls[User->GetX() - 1][User->GetY() - 1]->isAlive())
@@ -227,6 +253,7 @@ void GamePlay::Render()
 				if (walls[User->GetX() - 1][User->GetY() - 1]->isDot())
 				{
 					score++;
+					pelletCount++;
 					ghostScore++;
 					walls[User->GetX() - 1][User->GetY() - 1]->isDot(false);
 				}
@@ -240,6 +267,13 @@ void GamePlay::Render()
 	{
 		if (User->GetX() == Console::WindowWidth() - 1 && User->GetY() == 19)
 		{
+			if (walls[0][18]->isDot())
+			{
+				score++;
+				pelletCount++;
+				ghostScore++;
+				walls[0][18]->isDot(false);
+			}
 			User->SetX(0);
 		}
 		else
@@ -251,6 +285,7 @@ void GamePlay::Render()
 				if (walls[User->GetX() + 1][User->GetY() - 1]->isDot())
 				{
 					score++;
+					pelletCount++;
 					ghostScore++;
 					walls[User->GetX() + 1][User->GetY() - 1]->isDot(false);
 				}
@@ -260,6 +295,9 @@ void GamePlay::Render()
 			}
 		}
 	}
+
+	if (pelletCount == maxPelletCount)
+		play = false;
 
 	changeSymbol++;
 
@@ -293,13 +331,20 @@ void GamePlay::Render()
 	Console::ForegroundColor(Gray);
 
 
-	if (ghostMove % 2 == 1)
+	if (menu->getDif == 3)
 	{
 		ghostAI();
-		ghostMove = 0;
 	}
 	else
-		ghostMove++;
+	{
+		if (ghostMove % 2 == 1)
+		{
+			ghostAI();
+			ghostMove = 0;
+		}
+		else
+			ghostMove++;
+	}
 
 	//Drawing Ghosts
 	for (int i = 0; i < 4; i++)
@@ -341,6 +386,25 @@ void GamePlay::itsSimpleWeKillThePacman()
 		return;
 	}
 
+	for (int i = 0; i < 4; i++)
+	{
+		Console::SetCursorPosition(Ghosts[i].GetX(), Ghosts[i].GetY());
+		if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isDot())
+			cout << '.';
+		else if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isPowerUp())
+			cout << '0';
+		else
+			cout << ' ';
+	}
+
+	Console::SetCursorPosition(User->GetX(), User->GetY());
+	if (walls[User->GetX()][User->GetY() - 1]->isDot())
+		cout << '.';
+	else if (walls[User->GetX()][User->GetY() - 1]->isPowerUp())
+		cout << '0';
+	else
+		cout << ' ';
+
 	changeSymbol = 0;
 	User->resetPos();
 	up = false;
@@ -375,6 +439,7 @@ bool GamePlay::gameOver()
 		if (GetAsyncKeyState('Y'))
 		{
 			Console::Clear();
+			Console::Lock(false);
 			return true;
 		}
 		else if (GetAsyncKeyState('N'))
@@ -394,7 +459,7 @@ void GamePlay::setUpWalls()
 	switch (menu->getDif())
 	{
 	case 1:
-		pcin.open("Easy.pcmn");
+		pcin.open("EasyLevel.pcmn");
 		break;
 	case 2:
 		pcin.open("NormalLevel.pcmn");
@@ -422,7 +487,10 @@ void GamePlay::setUpWalls()
 				else if (readLine[i] == 'P')
 					walls[i][numberOfLinesRead]->isPowerUp(true);
 				else if (readLine[i] == '.')
+				{
 					walls[i][numberOfLinesRead]->isDot(true);
+					maxPelletCount++;
+				}
 			}
 			if (pcin.eof())
 				break;
@@ -454,63 +522,132 @@ void GamePlay::setUpWalls()
 		}
 	}
 }
-#if 1
+
 void GamePlay::ghostAI()
 {
+	vector <int> possibleDirection;
+
 	for (int i = 0; i < 4; i++)
 	{
+		Ghosts[i].setNorth(false);
+		Ghosts[i].setSouth(false);
+		Ghosts[i].setWest(false);
+		Ghosts[i].setEast(false);
+
 		if (Ghosts[i].GetAlive())
 		{
-			int ghostX = Ghosts[i].GetX();
-			int ghostY = Ghosts[i].GetY();
-			int pacX = User->GetX();
-			int pacY = User->GetY();
-
-			if (Ghosts[i].getUp())
-			{
-				if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isDot())
-				{
-					Console::SetCursorPosition(Ghosts[i].GetX(), Ghosts[i].GetY() - 1);
-					cout << '.';
-				}
-				if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 2]->isAlive())
-				{
-					Ghosts[i].setUp(false);
-				}
-				else
-					Ghosts[i].SetY(Ghosts[i].GetY() - 1);
-			}
-
-			/*
 			Console::SetCursorPosition(Ghosts[i].GetX(), Ghosts[i].GetY());
-			if (walls[Ghosts[i].GetX()][Ghosts[i].GetY()]->isDot())
+
+			if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isDot())
 				cout << '.';
-			else if (walls[Ghosts[i].GetX()][Ghosts[i].GetY()]->isPowerUp())
+			else if (walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 1]->isPowerUp())
 				cout << '0';
 			else
 				cout << ' ';
-			if (abs(ghostX - pacX) > abs(ghostY - pacY))
-			{
 
-				if (pacX > ghostX)
+			if (Ghosts[i].GetX() == Console::WindowWidth() - 1 && Ghosts[i].GetY() == 19)
+			{
+				if (Ghosts[i].getRight())
 				{
-					Ghosts[i].SetX(ghostX += 1);
+					Ghosts[i].SetX(0);
 				}
-				else
-					Ghosts[i].SetX(ghostX -= 1);
 			}
-			else if (abs(ghostX - pacX) < abs(ghostY - pacY))
+			else if (Ghosts[i].GetX() == 0 && Ghosts[i].GetY() == 19)
 			{
-				if (pacY > ghostY)
-					Ghosts[i].SetY(ghostY += 1);
-				else
-					Ghosts[i].SetY(ghostY -= 1);
+				if (Ghosts[i].getLeft())
+				{
+					Ghosts[i].SetX(Console::WindowWidth() - 1);
+				}
 			}
-			else if (ghostX == pacX && ghostY == pacY)
+			else
 			{
-				itsSimpleWeKillThePacman();
-			}*/
+				if (!walls[Ghosts[i].GetX()][Ghosts[i].GetY() - 2]->isAlive())
+				{
+					if (!Ghosts[i].getDown())
+					{
+						Ghosts[i].setNorth(true);
+						possibleDirection.push_back(0);
+					}
+				}
+				if (!walls[Ghosts[i].GetX()][Ghosts[i].GetY()]->isAlive())
+				{
+					if (!Ghosts[i].getUp())
+					{
+						Ghosts[i].setSouth(1);
+						possibleDirection.push_back(1);
+					}
+				}
+				if (!walls[Ghosts[i].GetX() - 1][Ghosts[i].GetY() - 1]->isAlive())
+				{
+					if (!Ghosts[i].getRight())
+					{
+						Ghosts[i].setWest(2);
+						possibleDirection.push_back(2);
+					}
+				}
+				if (!walls[Ghosts[i].GetX() + 1][Ghosts[i].GetY() - 1]->isAlive())
+				{
+					if (!Ghosts[i].getLeft())
+					{
+						Ghosts[i].setEast(3);
+						possibleDirection.push_back(3);
+					}
+				}
+
+				/*Up = 0
+				  Down = 1
+				  Left = 2
+				  Right = 3*/
+
+				switch (possibleDirection[rand() % possibleDirection.size()])
+				{
+				case 0:
+					Ghosts[i].setUp(true);
+					Ghosts[i].setDown(false);
+					Ghosts[i].setLeft(false);
+					Ghosts[i].setRight(false);
+					break;
+				case 1:
+					Ghosts[i].setUp(false);
+					Ghosts[i].setDown(true);
+					Ghosts[i].setLeft(false);
+					Ghosts[i].setRight(false);
+					break;
+				case 2:
+					Ghosts[i].setUp(false);
+					Ghosts[i].setDown(false);
+					Ghosts[i].setLeft(true);
+					Ghosts[i].setRight(false);
+					break;
+				case 3:
+					Ghosts[i].setUp(false);
+					Ghosts[i].setDown(false);
+					Ghosts[i].setLeft(false);
+					Ghosts[i].setRight(true);
+					break;
+				default:
+					break;
+				}
+
+			}
+			if (Ghosts[i].getUp())
+			{
+				Ghosts[i].SetY(Ghosts[i].GetY() - 1);
+			}
+			else if (Ghosts[i].getDown())
+			{
+				Ghosts[i].SetY(Ghosts[i].GetY() + 1);
+			}
+			else if (Ghosts[i].getLeft())
+			{
+				Ghosts[i].SetX(Ghosts[i].GetX() - 1);
+			}
+			else if (Ghosts[i].getRight())
+			{
+				Ghosts[i].SetX(Ghosts[i].GetX() + 1);
+			}
+			possibleDirection.clear();
+
 		}
 	}
 }
-#endif

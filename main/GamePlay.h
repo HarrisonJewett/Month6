@@ -26,6 +26,7 @@ public:
 	void ghostAI();
 	bool gameOver();
 	
+	
 
 	bool play;
 	bool up;
@@ -37,5 +38,6 @@ public:
 	int score;
 	int ghostScore;
 	int ghostMove;
-	//Changed things here
+	int pelletCount;
+	int maxPelletCount;
 };
