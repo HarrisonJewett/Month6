@@ -10,6 +10,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <mmsystem.h>
+
 #include "Console.h"
 
 using namespace std;

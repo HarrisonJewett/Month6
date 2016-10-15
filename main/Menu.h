@@ -13,6 +13,7 @@ public:
 	void mainMenu();
 	void controls();
 	void difficulty();
+	void displayHighscores();
 
 	//get
 	int getDif();

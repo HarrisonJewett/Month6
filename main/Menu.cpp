@@ -76,6 +76,8 @@ void Menu::mainMenu()
 		}
 		if (GetAsyncKeyState('4'))
 		{
+			displayHighscores();
+			choice = 0;
 		}
 
 	}
@@ -88,7 +90,7 @@ void Menu::controls()
 	Console::SetCursorPosition(0, Console::WindowHeight() / 2 - 10);
 	cout << "Waka around the map to collect pellets and earn points";
 	cout << "\n\nGhosts will start to chase you avoid them to stay alive.";
-	cout << "\n\nCollect powerups to eat ghosts and earn more points.";
+	cout << "\n\nCollect large pellets to earn more points.";
 	cout << "\n\nUse WASD for controls";
 	cout << "\n\nIf you are coming across a tight corner, try holding down the direction you want to turn";
 	cout << "\n\nPress ESC anytime during gameplay to quit.";
@@ -162,5 +164,47 @@ void Menu::difficulty()
 				return;
 		}
 		Sleep(50);
+	}
+}
+
+void Menu::displayHighscores()
+{
+	Console::Clear();
+	
+	ifstream highscoreInput;
+
+	highscoreInput.open("Highscores.bin", ios_base::binary);
+
+	if (highscoreInput.is_open())
+	{
+		/*highscoreInput.seekg(0, ios_base::end);
+		int count = (int)highscoreInput.tellg();
+		highscoreInput.seekg(0, ios_base::beg);
+
+		char text[32];
+		
+
+		while (true)
+		{
+			
+			highscoreInput.read((char*)&)
+			if (highscoreInput.eof())
+				break;
+
+			
+		}*/
+		highscoreInput.close();
+	}
+	else
+	{
+		//file didn't open
+	}
+
+	cout << "Press ESC to return to the main menu.";
+
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE))
+			return;
 	}
 }

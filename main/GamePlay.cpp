@@ -69,6 +69,7 @@ GamePlay::~GamePlay()
 
 void GamePlay::Play()
 {
+	PlaySound(TEXT("pacmanStartup.wav"), NULL, SND_FILENAME);
 	while (play)
 	{
 		Update();
@@ -207,6 +208,12 @@ void GamePlay::Render()
 				ghostScore++;
 				walls[User->GetX()][User->GetY() - 2]->isDot(false);
 			}
+			else if (walls[User->GetX()][User->GetY() - 2]->isPowerUp())
+			{
+				score += 15;
+				ghostScore += 15;
+				walls[User->GetX()][User->GetY() - 2]->isPowerUp(false);
+			}
 			if (changeSymbol % 6 > 2)
 				User->SetSymbol('V');
 			User->SetY(User->GetY() - 1);
@@ -224,6 +231,12 @@ void GamePlay::Render()
 				pelletCount++;
 				ghostScore++;
 				walls[User->GetX()][User->GetY()]->isDot(false);
+			}
+			else if (walls[User->GetX()][User->GetY()]->isPowerUp())
+			{
+				score += 15;
+				ghostScore += 15;
+				walls[User->GetX()][User->GetY()]->isPowerUp(false);
 			}
 			if (changeSymbol % 6 > 2)
 				User->SetSymbol('^');
@@ -257,6 +270,12 @@ void GamePlay::Render()
 					ghostScore++;
 					walls[User->GetX() - 1][User->GetY() - 1]->isDot(false);
 				}
+				else if (walls[User->GetX() - 1][User->GetY() - 1]->isPowerUp())
+				{
+					score += 15;
+					ghostScore += 15;
+					walls[User->GetX() - 1][User->GetY() - 1]->isPowerUp(false);
+				}
 				if (changeSymbol % 6 > 2)
 					User->SetSymbol('>');
 				User->SetX(User->GetX() - 1);
@@ -288,6 +307,12 @@ void GamePlay::Render()
 					pelletCount++;
 					ghostScore++;
 					walls[User->GetX() + 1][User->GetY() - 1]->isDot(false);
+				}
+				else if (walls[User->GetX() + 1][User->GetY() - 1]->isPowerUp())
+				{
+					score += 15;
+					ghostScore += 15;
+					walls[User->GetX() + 1][User->GetY() - 1]->isPowerUp(false);
 				}
 				if (changeSymbol % 6 > 2)
 					User->SetSymbol('<');
@@ -331,7 +356,7 @@ void GamePlay::Render()
 	Console::ForegroundColor(Gray);
 
 
-	if (menu->getDif == 3)
+	if (menu->getDif() == 3)
 	{
 		ghostAI();
 	}
@@ -428,6 +453,20 @@ void GamePlay::resetGhost()
 
 bool GamePlay::gameOver()
 {
+	ofstream binaryHighscores;
+
+	binaryHighscores.open("Highscores.bin", ios_base::binary);
+	if (binaryHighscores.is_open())
+	{
+		binaryHighscores.write((char*)&score, sizeof(score));
+
+		binaryHighscores.close();
+	}
+	else
+	{
+		//file failed to load
+	}
+
 	Console::Clear();
 	while (true)
 	{
@@ -593,40 +632,65 @@ void GamePlay::ghostAI()
 						possibleDirection.push_back(3);
 					}
 				}
-
+									
 				/*Up = 0
 				  Down = 1
 				  Left = 2
 				  Right = 3*/
-
-				switch (possibleDirection[rand() % possibleDirection.size()])
+				if (possibleDirection.size() > 0)
 				{
-				case 0:
-					Ghosts[i].setUp(true);
-					Ghosts[i].setDown(false);
-					Ghosts[i].setLeft(false);
-					Ghosts[i].setRight(false);
-					break;
-				case 1:
-					Ghosts[i].setUp(false);
-					Ghosts[i].setDown(true);
-					Ghosts[i].setLeft(false);
-					Ghosts[i].setRight(false);
-					break;
-				case 2:
-					Ghosts[i].setUp(false);
-					Ghosts[i].setDown(false);
-					Ghosts[i].setLeft(true);
-					Ghosts[i].setRight(false);
-					break;
-				case 3:
-					Ghosts[i].setUp(false);
-					Ghosts[i].setDown(false);
-					Ghosts[i].setLeft(false);
-					Ghosts[i].setRight(true);
-					break;
-				default:
-					break;
+					switch (possibleDirection[rand() % possibleDirection.size()])
+					{
+					case 0:
+						Ghosts[i].setUp(true);
+						Ghosts[i].setDown(false);
+						Ghosts[i].setLeft(false);
+						Ghosts[i].setRight(false);
+						break;
+					case 1:
+						Ghosts[i].setUp(false);
+						Ghosts[i].setDown(true);
+						Ghosts[i].setLeft(false);
+						Ghosts[i].setRight(false);
+						break;
+					case 2:
+						Ghosts[i].setUp(false);
+						Ghosts[i].setDown(false);
+						Ghosts[i].setLeft(true);
+						Ghosts[i].setRight(false);
+						break;
+					case 3:
+						Ghosts[i].setUp(false);
+						Ghosts[i].setDown(false);
+						Ghosts[i].setLeft(false);
+						Ghosts[i].setRight(true);
+						break;
+					default:
+						break;
+					}
+				}
+				else
+				{
+					if (Ghosts[i].getUp())
+					{
+						Ghosts[i].setDown(true);
+						Ghosts[i].setUp(false);
+					}
+					else if (Ghosts[i].getDown())
+					{
+						Ghosts[i].setUp(true);
+						Ghosts[i].setDown(false);						
+					}
+					else if (Ghosts[i].getLeft())
+					{
+						Ghosts[i].setRight(true);
+						Ghosts[i].setLeft(false);
+					}
+					else if (Ghosts[i].getRight())
+					{
+						Ghosts[i].setLeft(true);
+						Ghosts[i].setRight(false);
+					}
 				}
 
 			}
