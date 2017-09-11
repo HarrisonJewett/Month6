@@ -69,7 +69,7 @@ GamePlay::~GamePlay()
 
 void GamePlay::Play()
 {
-	PlaySound(TEXT("pacmanStartup.wav"), NULL, SND_FILENAME);
+	//PlaySound(TEXT("pacmanStartup.wav"), NULL, SND_FILENAME);
 	while (play)
 	{
 		Update();
@@ -98,13 +98,13 @@ void GamePlay::Update()
 	Ghosts[2].SetFrontColor(Yellow);
 	Ghosts[3].SetFrontColor(Magenta);
 
-	if (ghostScore == 10)
+	if (ghostScore > 10)
 		Ghosts[0].SetAlive(true);
-	else if (ghostScore == 50)
+	else if (ghostScore > 50)
 		Ghosts[1].SetAlive(true);
-	else if (ghostScore == 100)
+	else if (ghostScore >= 100)
 		Ghosts[2].SetAlive(true);
-	else if (ghostScore == 150)
+	else if (ghostScore >= 150)
 		Ghosts[3].SetAlive(true);
 
 
